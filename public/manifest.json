@@ -1,0 +1,19 @@
+{
+  "name": "쓔 키우기 프로젝트",
+  "short_name": "쓔 키우기",
+  "description": "중기부 청년인턴 정책 체험 게이미피케이션 프로그램",
+  "start_url": "/home",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FFF8EC",
+  "theme_color": "#FFD166",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

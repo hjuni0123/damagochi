@@ -1,0 +1,265 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  sessions     Session[]
+}
+
+model Team {
+  id           String   @id @default(cuid())
+  code         String   @unique // login id, e.g. "seoul"
+  passwordHash String
+  name         String // e.g. "서울청"
+  region       String
+  xp           Int      @default(0)
+  coins        Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  items          TeamItem[]
+  submissions    MissionSubmission[]
+  achievements   TeamAchievement[]
+  quests         TeamQuest[]
+  activityLogs   ActivityLog[]
+  sessions       Session[]
+  likesGiven     Like[]              @relation("LikesGiven")
+  likesReceived  Like[]              @relation("LikesReceived")
+  commentsGiven    Comment[]         @relation("CommentsGiven")
+  commentsReceived Comment[]         @relation("CommentsReceived")
+  lastAttendance   DateTime?
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  teamId    String?
+  team      Team?    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  adminId   String?
+  admin     Admin?   @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
+
+enum ItemCategory {
+  OUTFIT
+  HAT
+  FACE
+  ACCESSORY
+  BACKGROUND
+  EMOTION
+}
+
+enum Rarity {
+  COMMON
+  RARE
+  EPIC
+}
+
+model Item {
+  id        String       @id @default(cuid())
+  name      String
+  category  ItemCategory
+  price     Int
+  emoji     String // representative visual for the layered avatar
+  color     String       @default("#FFD966")
+  rarity    Rarity       @default(COMMON)
+  createdAt DateTime     @default(now())
+
+  teamItems TeamItem[]
+}
+
+model TeamItem {
+  id           String   @id @default(cuid())
+  teamId       String
+  team         Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  itemId       String
+  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  purchasedAt  DateTime @default(now())
+  equipped     Boolean  @default(false)
+
+  @@unique([teamId, itemId])
+}
+
+enum MissionCategory {
+  BAEKNYEON
+  ONNURI
+  MARKET
+  TEAM
+  POLICY_EVENT
+  OTHER
+}
+
+model Mission {
+  id             String          @id @default(cuid())
+  title          String
+  description    String          @default("")
+  category       MissionCategory
+  xpReward       Int
+  coinReward     Int
+  requiresPhoto  Boolean         @default(true)
+  active         Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+
+  submissions MissionSubmission[]
+}
+
+enum SubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model MissionSubmission {
+  id          String           @id @default(cuid())
+  teamId      String
+  team        Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  missionId   String
+  mission     Mission          @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  photoUrl    String?
+  caption     String           @default("")
+  status      SubmissionStatus @default(PENDING)
+  submittedAt DateTime         @default(now())
+  reviewedAt  DateTime?
+  reviewNote  String           @default("")
+  xpAwarded   Int              @default(0)
+  coinAwarded Int              @default(0)
+}
+
+enum AchievementCondition {
+  MISSION_CATEGORY_COUNT
+  TOTAL_SUBMISSIONS
+  DAILY_STREAK
+  TEAM_ALL_QUESTS
+}
+
+model Achievement {
+  id                String                @id @default(cuid())
+  key               String                @unique
+  title             String
+  hiddenHint        String                @default("???")
+  description       String
+  icon              String                @default("🏆")
+  coinReward        Int                   @default(0)
+  conditionType     AchievementCondition
+  conditionCategory MissionCategory?
+  conditionCount    Int                   @default(1)
+  createdAt         DateTime              @default(now())
+
+  teamAchievements TeamAchievement[]
+}
+
+model TeamAchievement {
+  id            String      @id @default(cuid())
+  teamId        String
+  team          Team        @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  unlockedAt    DateTime    @default(now())
+
+  @@unique([teamId, achievementId])
+}
+
+enum QuestType {
+  DAILY
+  WEEKLY
+}
+
+enum QuestTrigger {
+  SUBMISSION
+  COMMENT
+  ATTENDANCE
+}
+
+model Quest {
+  id          String           @id @default(cuid())
+  type        QuestType
+  title       String
+  description String           @default("")
+  triggerType QuestTrigger     @default(SUBMISSION)
+  category    MissionCategory?
+  targetCount Int              @default(1)
+  xpReward    Int
+  coinReward  Int
+  active      Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+
+  teamQuests TeamQuest[]
+}
+
+model Comment {
+  id           String   @id @default(cuid())
+  teamId       String
+  team         Team     @relation("CommentsGiven", fields: [teamId], references: [id], onDelete: Cascade)
+  targetTeamId String
+  targetTeam   Team     @relation("CommentsReceived", fields: [targetTeamId], references: [id], onDelete: Cascade)
+  message      String
+  createdAt    DateTime @default(now())
+}
+
+model TeamQuest {
+  id          String    @id @default(cuid())
+  teamId      String
+  team        Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  questId     String
+  quest       Quest     @relation(fields: [questId], references: [id], onDelete: Cascade)
+  periodKey   String // e.g. "2026-07-14" for daily, "2026-W28" for weekly
+  progress    Int       @default(0)
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+
+  @@unique([teamId, questId, periodKey])
+}
+
+enum ActivityType {
+  LEVEL_UP
+  ITEM_PURCHASE
+  ACHIEVEMENT
+  MISSION_APPROVED
+  EVENT
+}
+
+model ActivityLog {
+  id        String       @id @default(cuid())
+  teamId    String?
+  team      Team?        @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  type      ActivityType
+  message   String
+  createdAt DateTime     @default(now())
+}
+
+model Like {
+  id           String   @id @default(cuid())
+  teamId       String
+  team         Team     @relation("LikesGiven", fields: [teamId], references: [id], onDelete: Cascade)
+  targetTeamId String
+  targetTeam   Team     @relation("LikesReceived", fields: [targetTeamId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+
+  @@unique([teamId, targetTeamId])
+}
+
+enum RandomEventType {
+  COIN_DOUBLE
+  RANDOM_REWARD
+  XP_TRIPLE_CATEGORY
+  ONNURI_DOUBLE
+}
+
+model RandomEvent {
+  id        String          @id @default(cuid())
+  type      RandomEventType
+  label     String
+  category  MissionCategory?
+  createdAt DateTime        @default(now())
+  expiresAt DateTime
+}
