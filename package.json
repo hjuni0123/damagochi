@@ -10,6 +10,7 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:migrate": "prisma migrate dev",
     "setup": "prisma migrate deploy && tsx prisma/seed.ts",
+    "vercel-build": "prisma migrate deploy && tsx prisma/seed.ts && next build",
     "postinstall": "prisma generate"
   },
   "prisma": {

@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { randomUUID } from "crypto";
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
 import { getCurrentTeam } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 const ALLOWED_TYPES = new Set(["image/png", "image/jpeg", "image/webp", "image/gif"]);
-const MAX_SIZE = 8 * 1024 * 1024; // 8MB
+const MAX_SIZE = 4 * 1024 * 1024; // 4MB (stored in DB)
 
 export async function POST(req: NextRequest) {
   const team = await getCurrentTeam();
@@ -29,7 +25,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "존재하지 않는 미션입니다." }, { status: 404 });
   }
 
-  let photoUrl: string | null = null;
+  let photoData: Uint8Array<ArrayBuffer> | null = null;
+  let photoMime: string | null = null;
 
   if (mission.requiresPhoto) {
     if (!(file instanceof File) || file.size === 0) {
@@ -39,24 +36,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "지원하지 않는 이미지 형식입니다." }, { status: 400 });
     }
     if (file.size > MAX_SIZE) {
-      return NextResponse.json({ error: "이미지 용량은 8MB 이하여야 합니다." }, { status: 400 });
+      return NextResponse.json({ error: "이미지 용량은 4MB 이하여야 합니다." }, { status: 400 });
     }
-    await mkdir(UPLOAD_DIR, { recursive: true });
-    const ext = file.type.split("/")[1] === "jpeg" ? "jpg" : file.type.split("/")[1];
-    const filename = `${randomUUID()}.${ext}`;
-    const buffer = Buffer.from(await file.arrayBuffer());
-    await writeFile(path.join(UPLOAD_DIR, filename), buffer);
-    photoUrl = `/uploads/${filename}`;
+    photoData = new Uint8Array(await file.arrayBuffer());
+    photoMime = file.type;
   }
 
   const submission = await prisma.missionSubmission.create({
     data: {
       teamId: team.id,
       missionId: mission.id,
-      photoUrl,
+      photoData,
+      photoMime,
       caption: typeof caption === "string" ? caption.slice(0, 300) : "",
     },
   });
 
-  return NextResponse.json({ ok: true, submission });
+  if (photoData) {
+    await prisma.missionSubmission.update({
+      where: { id: submission.id },
+      data: { photoUrl: `/api/photos/${submission.id}` },
+    });
+  }
+
+  return NextResponse.json({ ok: true, submission: { id: submission.id } });
 }

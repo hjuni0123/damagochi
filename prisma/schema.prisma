@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -126,6 +126,8 @@ model MissionSubmission {
   missionId   String
   mission     Mission          @relation(fields: [missionId], references: [id], onDelete: Cascade)
   photoUrl    String?
+  photoData   Bytes?
+  photoMime   String?
   caption     String           @default("")
   status      SubmissionStatus @default(PENDING)
   submittedAt DateTime         @default(now())
