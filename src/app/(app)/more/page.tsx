@@ -11,14 +11,14 @@ const LINKS = [
 export default function MorePage() {
   return (
     <div className="p-4 space-y-4">
-      <h1 className="text-xl font-bold">더보기</h1>
+      <h1 className="font-display text-xl">더보기</h1>
       <div className="grid gap-3">
         {LINKS.map((l) => (
-          <Link key={l.href} href={l.href} className="rounded-2xl bg-white shadow-sm p-4 flex items-center gap-3">
+          <Link key={l.href} href={l.href} className="card p-4 flex items-center gap-3">
             <span className="text-2xl">{l.icon}</span>
             <div>
               <div className="font-bold">{l.label}</div>
-              <div className="text-xs text-black/50">{l.desc}</div>
+              <div className="text-xs text-ssyu-brown/50">{l.desc}</div>
             </div>
           </Link>
         ))}

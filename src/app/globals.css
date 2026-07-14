@@ -1,16 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fff8ec;
-  --foreground: #3d2b1f;
-  --ssyu-yellow: #ffd166;
-  --ssyu-orange: #ff9f5a;
+  --background: #fdf6e9;
+  --foreground: #4a3426;
+  --ssyu-yellow: #ffcf5c;
+  --ssyu-orange: #ff9d4d;
+  --ssyu-coral: #ff7e67;
   --ssyu-pink: #ff8fab;
-  --ssyu-mint: #7fd8be;
-  --ssyu-sky: #7cc6fe;
-  --ssyu-purple: #b28dff;
-  --ssyu-cream: #fff8ec;
-  --ssyu-brown: #3d2b1f;
+  --ssyu-mint: #52c99a;
+  --ssyu-sky: #5cb8ff;
+  --ssyu-purple: #a78bfa;
+  --ssyu-cream: #fdf6e9;
+  --ssyu-brown: #4a3426;
+  --card-shadow: 0 2px 12px rgba(74, 52, 38, 0.08), 0 1px 3px rgba(74, 52, 38, 0.06);
 }
 
 @theme inline {
@@ -18,30 +20,57 @@
   --color-foreground: var(--foreground);
   --color-ssyu-yellow: var(--ssyu-yellow);
   --color-ssyu-orange: var(--ssyu-orange);
+  --color-ssyu-coral: var(--ssyu-coral);
   --color-ssyu-pink: var(--ssyu-pink);
   --color-ssyu-mint: var(--ssyu-mint);
   --color-ssyu-sky: var(--ssyu-sky);
   --color-ssyu-purple: var(--ssyu-purple);
   --color-ssyu-cream: var(--ssyu-cream);
   --color-ssyu-brown: var(--ssyu-brown);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #241b14;
-    --foreground: #ffedd2;
-  }
+  --font-display: var(--font-jua);
 }
 
 body {
-  background: var(--background);
+  background:
+    radial-gradient(circle at 15% 10%, rgba(255, 207, 92, 0.18), transparent 40%),
+    radial-gradient(circle at 85% 30%, rgba(255, 143, 171, 0.12), transparent 45%),
+    var(--background);
   color: var(--foreground);
-  font-family: "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Segoe UI",
-    system-ui, -apple-system, sans-serif;
+  font-family: var(--font-gowun), "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-jua), "Apple SD Gothic Neo", sans-serif;
+  letter-spacing: 0;
+  font-weight: 400;
 }
 
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* game-style card */
+.card {
+  background: #fffdf8;
+  border-radius: 1.5rem;
+  border: 1.5px solid rgba(74, 52, 38, 0.07);
+  box-shadow: var(--card-shadow);
+}
+
+/* chunky game button */
+.btn-game {
+  font-family: var(--font-jua), sans-serif;
+  border-radius: 1rem;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.15);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.15s ease;
+}
+.btn-game:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+}
+.btn-game:disabled {
+  opacity: 0.5;
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -67,4 +96,17 @@ body {
 }
 .animate-pop {
   animation: pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+.xp-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  animation: shine 2.4s ease-in-out infinite;
 }

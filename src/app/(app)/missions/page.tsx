@@ -26,7 +26,7 @@ const CATEGORY_LABEL: Record<string, string> = {
 const STATUS_LABEL: Record<string, { label: string; className: string }> = {
   PENDING: { label: "심사중", className: "bg-ssyu-yellow/30 text-ssyu-brown" },
   APPROVED: { label: "승인됨", className: "bg-ssyu-mint/30 text-ssyu-brown" },
-  REJECTED: { label: "반려됨", className: "bg-black/10 text-black/50" },
+  REJECTED: { label: "반려됨", className: "bg-black/10 text-ssyu-brown/50" },
 };
 
 export default function MissionsPage() {
@@ -78,21 +78,21 @@ export default function MissionsPage() {
 
   return (
     <div className="p-4 space-y-5">
-      <h1 className="text-xl font-bold">미션 인증</h1>
+      <h1 className="font-display text-xl">미션 인증</h1>
 
       <div className="grid gap-3">
         {missions.map((m) => (
           <button
             key={m.id}
             onClick={() => setSelected(m)}
-            className="rounded-2xl bg-white shadow-sm p-4 text-left flex items-center justify-between hover:ring-2 hover:ring-ssyu-orange/40 transition"
+            className="card p-4 text-left flex items-center justify-between hover:ring-2 hover:ring-ssyu-orange/40 transition"
           >
             <div>
-              <div className="text-xs font-bold text-ssyu-orange">{CATEGORY_LABEL[m.category] ?? m.category}</div>
+              <div className="font-display text-[11px] text-white bg-ssyu-orange/90 inline-block px-2 py-0.5 rounded-full mb-1">{CATEGORY_LABEL[m.category] ?? m.category}</div>
               <div className="font-bold">{m.title}</div>
-              <div className="text-xs text-black/50 mt-0.5">{m.description}</div>
+              <div className="text-xs text-ssyu-brown/50 mt-0.5">{m.description}</div>
             </div>
-            <div className="text-right text-xs font-bold text-black/50 whitespace-nowrap">
+            <div className="text-right text-xs font-bold text-ssyu-brown/50 whitespace-nowrap">
               +{m.xpReward}XP
               <br />
               +{m.coinReward}🪙
@@ -103,9 +103,9 @@ export default function MissionsPage() {
 
       {selected && (
         <div className="fixed inset-0 z-30 bg-black/40 flex items-end sm:items-center justify-center p-4" onClick={() => setSelected(null)}>
-          <div className="w-full max-w-sm bg-white rounded-3xl p-5 space-y-3" onClick={(e) => e.stopPropagation()}>
+          <div className="w-full max-w-sm card p-5 space-y-3" onClick={(e) => e.stopPropagation()}>
             <h2 className="font-bold text-lg">{selected.title}</h2>
-            <p className="text-sm text-black/50">{selected.description}</p>
+            <p className="text-sm text-ssyu-brown/50">{selected.description}</p>
             {selected.requiresPhoto && (
               <input
                 ref={fileInputRef}
@@ -131,7 +131,7 @@ export default function MissionsPage() {
               <button
                 onClick={submit}
                 disabled={submitting}
-                className="flex-1 rounded-xl bg-ssyu-orange text-white font-bold py-2.5 disabled:opacity-50"
+                className="flex-1 btn-game bg-ssyu-orange text-white py-2.5 disabled:opacity-50"
               >
                 {submitting ? "제출 중..." : "인증 제출"}
               </button>
@@ -141,10 +141,10 @@ export default function MissionsPage() {
       )}
 
       <div>
-        <h2 className="font-bold mb-2">내 인증 기록</h2>
+        <h2 className="font-display text-[15px] mb-2">내 인증 기록</h2>
         <div className="space-y-2">
           {submissions.map((s) => (
-            <div key={s.id} className="rounded-2xl bg-white shadow-sm p-3 flex items-center gap-3">
+            <div key={s.id} className="card p-3 flex items-center gap-3">
               {s.photoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={s.photoUrl} alt="" className="w-12 h-12 rounded-xl object-cover" />
@@ -153,14 +153,14 @@ export default function MissionsPage() {
               )}
               <div className="flex-1">
                 <div className="font-semibold text-sm">{s.mission.title}</div>
-                <div className="text-xs text-black/40">{new Date(s.submittedAt).toLocaleDateString("ko-KR")}</div>
+                <div className="text-xs text-ssyu-brown/40">{new Date(s.submittedAt).toLocaleDateString("ko-KR")}</div>
               </div>
               <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${STATUS_LABEL[s.status].className}`}>
                 {STATUS_LABEL[s.status].label}
               </span>
             </div>
           ))}
-          {submissions.length === 0 && <p className="text-sm text-black/40">아직 제출한 인증이 없습니다.</p>}
+          {submissions.length === 0 && <p className="text-sm text-ssyu-brown/40">아직 제출한 인증이 없습니다.</p>}
         </div>
       </div>
     </div>

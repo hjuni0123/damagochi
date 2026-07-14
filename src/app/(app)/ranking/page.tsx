@@ -45,14 +45,14 @@ export default function RankingPage() {
 
   return (
     <div className="p-4 space-y-4">
-      <h1 className="text-xl font-bold">랭킹</h1>
+      <h1 className="font-display text-xl">랭킹</h1>
       <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
         {TABS.map((t) => (
           <button
             key={t.value}
             onClick={() => setTab(t.value)}
-            className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-sm font-bold transition ${
-              tab === t.value ? "bg-ssyu-brown text-white" : "bg-white text-black/50"
+            className={`whitespace-nowrap px-3.5 py-1.5 rounded-full font-display text-sm transition ${
+              tab === t.value ? "bg-ssyu-brown text-white shadow-sm" : "bg-white border border-ssyu-brown/10 text-ssyu-brown/45"
             }`}
           >
             {t.label}
@@ -60,16 +60,16 @@ export default function RankingPage() {
         ))}
       </div>
 
-      {loading && <p className="text-sm text-black/40">불러오는 중...</p>}
+      {loading && <p className="text-sm text-ssyu-brown/40">불러오는 중...</p>}
 
       <div className="space-y-2">
         {rows.map((r, idx) => (
-          <div key={r.teamId} className="rounded-2xl bg-white shadow-sm p-3 flex items-center gap-3">
+          <div key={r.teamId} className="card p-3 flex items-center gap-3">
             <span className="w-7 text-center font-extrabold text-lg">{MEDAL[idx] ?? idx + 1}</span>
             <SsyuAvatar level={r.level} items={r.items} size={48} animate={false} className="rounded-xl" />
             <div className="flex-1">
               <div className="font-bold text-sm">{r.name}</div>
-              <div className="text-xs text-black/40">{r.region} · {r.levelName}</div>
+              <div className="text-xs text-ssyu-brown/40">{r.region} · {r.levelName}</div>
             </div>
             <div className="font-extrabold text-ssyu-orange">{activeTab.metric(r)}</div>
           </div>
