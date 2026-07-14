@@ -14,9 +14,8 @@
 ## 시작하기
 
 ```bash
-npm install          # postinstall에서 prisma generate 자동 실행
-npm run db:migrate    # 최초 1회: SQLite DB 생성 + 마이그레이션 적용
-npm run db:seed       # 데모 팀 8개, 관리자 계정, 미션/상점/업적/퀘스트 시드
+npm install    # postinstall에서 prisma generate 자동 실행
+npm run setup  # 최초 1회: DB 생성 + 마이그레이션 + 시드 데이터
 npm run dev
 ```
 
