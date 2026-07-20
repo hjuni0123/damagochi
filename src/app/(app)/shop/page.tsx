@@ -26,8 +26,8 @@ const TABS: { value: ShopItem["category"]; label: string }[] = [
 ];
 
 const RARITY_STYLE: Record<string, string> = {
-  COMMON: "border-black/10",
-  RARE: "border-ssyu-sky",
+  COMMON: "border-ssyu-brown/8",
+  RARE: "border-ssyu-sky/70",
   EPIC: "border-ssyu-purple ring-2 ring-ssyu-purple/30",
 };
 
@@ -93,11 +93,15 @@ export default function ShopPage() {
 
   return (
     <div className="p-4 space-y-4">
-      <h1 className="text-xl font-bold">쓔 꾸미기</h1>
+      <h1 className="font-display text-xl">쓔 꾸미기</h1>
 
-      <div className="rounded-3xl bg-white shadow-sm p-4 flex flex-col items-center">
-        <SsyuAvatar level={me?.level ?? 1} items={previewItems} teamName={me?.name} size={170} />
-        <div className="mt-2 text-sm font-bold">🪙 {me?.coins ?? 0}</div>
+      <div className="card p-4 flex flex-col items-center">
+        <div className="rounded-full p-1.5 bg-gradient-to-b from-ssyu-yellow/60 to-ssyu-orange/30">
+          <SsyuAvatar level={me?.level ?? 1} items={previewItems} teamName={me?.name} size={160} className="!rounded-full" />
+        </div>
+        <div className="mt-2.5 font-display text-sm bg-ssyu-yellow/20 border border-ssyu-yellow/50 px-3 py-1 rounded-full">
+          🪙 {me?.coins?.toLocaleString() ?? 0}
+        </div>
       </div>
 
       <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
@@ -105,8 +109,8 @@ export default function ShopPage() {
           <button
             key={t.value}
             onClick={() => setTab(t.value)}
-            className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-sm font-bold transition ${
-              tab === t.value ? "bg-ssyu-brown text-white" : "bg-white text-black/50"
+            className={`whitespace-nowrap px-3.5 py-1.5 rounded-full font-display text-sm transition ${
+              tab === t.value ? "bg-ssyu-brown text-white shadow-sm" : "bg-white border border-ssyu-brown/10 text-ssyu-brown/45"
             }`}
           >
             {t.label}
@@ -118,31 +122,36 @@ export default function ShopPage() {
 
       <div className="grid grid-cols-2 gap-3">
         {visible.map((item) => (
-          <div key={item.id} className={`rounded-2xl bg-white shadow-sm p-3 border-2 ${RARITY_STYLE[item.rarity]}`}>
-            <div className="text-3xl text-center mb-1">{item.emoji}</div>
-            <div className="text-center font-bold text-sm">{item.name}</div>
+          <div key={item.id} className={`card p-3 !border-2 ${RARITY_STYLE[item.rarity]}`}>
+            <div
+              className="mx-auto mb-2 w-16 h-16 rounded-2xl flex items-center justify-center text-3xl"
+              style={{ background: `${item.color}22` }}
+            >
+              {item.emoji}
+            </div>
+            <div className="text-center font-display text-[13px]">{item.name}</div>
             {!item.owned ? (
               <button
                 disabled={busyId === item.id}
                 onClick={() => buy(item)}
-                className="w-full mt-2 rounded-xl bg-ssyu-orange text-white text-xs font-bold py-2 disabled:opacity-50"
+                className="w-full mt-2 btn-game bg-ssyu-orange text-white text-xs py-2"
               >
-                🪙 {item.price}
+                🪙 {item.price.toLocaleString()}
               </button>
             ) : (
               <button
                 disabled={busyId === item.id}
                 onClick={() => toggleEquip(item)}
-                className={`w-full mt-2 rounded-xl text-xs font-bold py-2 disabled:opacity-50 ${
-                  item.equipped ? "bg-ssyu-mint text-white" : "bg-black/5 text-ssyu-brown"
+                className={`w-full mt-2 btn-game text-xs py-2 ${
+                  item.equipped ? "bg-ssyu-mint text-white" : "bg-ssyu-brown/5 !shadow-none border border-ssyu-brown/10 text-ssyu-brown/60"
                 }`}
               >
-                {item.equipped ? "착용 중" : "착용하기"}
+                {item.equipped ? "✓ 착용 중" : "착용하기"}
               </button>
             )}
           </div>
         ))}
-        {visible.length === 0 && <p className="col-span-2 text-sm text-black/40 text-center py-8">아이템이 없습니다.</p>}
+        {visible.length === 0 && <p className="col-span-2 text-sm text-ssyu-brown/40 text-center py-8">아이템이 없습니다.</p>}
       </div>
     </div>
   );

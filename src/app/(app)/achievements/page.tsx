@@ -22,8 +22,8 @@ export default function AchievementsPage() {
 
   return (
     <div className="p-4 space-y-4">
-      <h1 className="text-xl font-bold">업적</h1>
-      <p className="text-sm text-black/50">숨겨진 업적을 찾아 달성해보세요!</p>
+      <h1 className="font-display text-xl">업적</h1>
+      <p className="text-sm text-ssyu-brown/50">숨겨진 업적을 찾아 달성해보세요!</p>
       <div className="grid grid-cols-2 gap-3">
         {list.map((a) => (
           <div
@@ -32,7 +32,7 @@ export default function AchievementsPage() {
           >
             <div className="text-3xl mb-1">{a.unlocked ? a.icon : "🔒"}</div>
             <div className="font-bold text-sm">{a.title}</div>
-            <div className="text-xs text-black/50 mt-1">{a.description}</div>
+            <div className="text-xs text-ssyu-brown/50 mt-1">{a.description}</div>
             {a.unlocked && <div className="text-xs font-bold text-ssyu-orange mt-1">+{a.coinReward}🪙</div>}
           </div>
         ))}

@@ -60,14 +60,14 @@ export default function GalleryPage() {
 
   return (
     <div className="p-4 space-y-4">
-      <h1 className="text-xl font-bold">쓔 갤러리</h1>
-      <p className="text-sm text-black/50">다른 팀의 쓔를 구경하고 응원해보세요!</p>
+      <h1 className="font-display text-xl">쓔 갤러리</h1>
+      <p className="text-sm text-ssyu-brown/50">다른 팀의 쓔를 구경하고 응원해보세요!</p>
 
       <div className="grid grid-cols-2 gap-3">
         {gallery.map((t) => (
-          <div key={t.teamId} className="rounded-2xl bg-white shadow-sm p-3 flex flex-col items-center">
+          <div key={t.teamId} className="card p-3 flex flex-col items-center">
             <SsyuAvatar level={t.level} items={t.items} teamName={t.name} size={130} />
-            <div className="text-xs text-black/40 mt-1">{t.levelName}</div>
+            <div className="text-xs text-ssyu-brown/40 mt-1">{t.levelName}</div>
             <button
               onClick={() => toggleLike(t.teamId)}
               className={`mt-2 w-full rounded-xl text-xs font-bold py-1.5 ${
@@ -85,7 +85,7 @@ export default function GalleryPage() {
             {openComment === t.teamId && (
               <div className="mt-2 w-full space-y-1.5">
                 {t.comments.map((c) => (
-                  <p key={c.id} className="text-[11px] text-black/50 truncate">
+                  <p key={c.id} className="text-[11px] text-ssyu-brown/50 truncate">
                     <span className="font-bold">{c.team.name}:</span> {c.message}
                   </p>
                 ))}

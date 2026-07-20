@@ -6,21 +6,30 @@
 
 - **Next.js 16** (App Router, Turbopack) + TypeScript
 - **Tailwind CSS v4**
-- **Prisma 6 + SQLite** (파일 기반 DB, 별도 인프라 불필요)
+- **Prisma 6 + PostgreSQL** (Vercel + Neon 무료 배포 기준)
 - **framer-motion** (레벨업/XP바/카드 애니메이션)
 - 쿠키 기반 자체 세션 인증 (팀 로그인 / 관리자 로그인 분리)
 - PWA manifest + service worker (오프라인 셸 캐싱)
 
-## 시작하기
+## 시작하기 (로컬)
+
+로컬에 PostgreSQL이 필요합니다. `.env.example`을 `.env`로 복사하고 `DATABASE_URL`을 본인 Postgres 접속 정보로 채우세요 (git에는 커밋되지 않습니다).
 
 ```bash
-npm install          # postinstall에서 prisma generate 자동 실행
-npm run db:migrate    # 최초 1회: SQLite DB 생성 + 마이그레이션 적용
-npm run db:seed       # 데모 팀 8개, 관리자 계정, 미션/상점/업적/퀘스트 시드
+cp .env.example .env   # DATABASE_URL을 실제 값으로 수정
+npm install             # postinstall에서 prisma generate 자동 실행
+npm run setup            # 최초 1회: 마이그레이션 + 시드 데이터
 npm run dev
 ```
 
 `http://localhost:3000` 접속. 최초 진입 시 로그인 여부에 따라 `/login`(팀) 또는 `/home`으로 리다이렉트됩니다.
+
+## 배포 (Vercel)
+
+1. Vercel에서 이 저장소를 Import
+2. **Storage** 탭 → **Create Database** → **Neon (Postgres)** 로 DB 생성 후 프로젝트에 **Connect** — `DATABASE_URL` 환경변수가 자동 주입됩니다
+3. **Deploy** — 빌드 시 `vercel-build` 스크립트(`prisma migrate deploy && seed && next build`)가 자동으로 테이블 생성과 초기 데이터 시드까지 처리합니다
+4. `DATABASE_URL`이 설정되지 않은 채로 배포하면 빌드가 실패합니다(로컬 `.env`는 배포에 포함되지 않음) — 이 경우 Storage 연결 여부를 다시 확인하세요. `/api/health`로 배포된 앱의 DB 연결 상태를 확인할 수 있습니다.
 
 ### 로그인 정보 (seed 기준)
 
@@ -63,6 +72,6 @@ src/app/api/                REST 라우트 핸들러 (팀/관리자 각각 세�
 
 ## 알려진 한계 (MVP 범위)
 
-- 사진 업로드는 로컬 파일시스템(`public/uploads`, git에서 제외됨)에 저장됩니다. 다중 서버/서버리스 배포 시 S3 등 오브젝트 스토리지로 교체가 필요합니다.
+- 인증 사진은 DB(`MissionSubmission.photoData`, bytea)에 직접 저장되어 서버리스 배포에서도 동작합니다. 사용량이 많아지면 S3 등 오브젝트 스토리지로 교체를 권장합니다.
 - PWA 아이콘은 SVG 플레이스홀더입니다. 배포 전 실제 브랜드 아이콘(PNG, 다양한 해상도)으로 교체를 권장합니다.
 - 랭킹/갤러리는 요청마다 전체 팀을 순회하여 집계합니다 — 팀 수가 수십 개 이하인 이 프로그램 규모에서는 충분하지만, 대규모 확장 시 캐싱/집계 테이블이 필요합니다.

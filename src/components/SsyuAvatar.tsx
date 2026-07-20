@@ -44,6 +44,7 @@ export default function SsyuAvatar({
   teamName,
   animate = true,
   className = "",
+  bare = false,
 }: {
   level: number;
   items?: EquippedItem[];
@@ -51,6 +52,7 @@ export default function SsyuAvatar({
   teamName?: string;
   animate?: boolean;
   className?: string;
+  bare?: boolean;
 }) {
   const bodyColor = LEVEL_BODY_COLOR[level] ?? LEVEL_BODY_COLOR[1];
   const outfit = items.find((i) => i.category === "OUTFIT");
@@ -67,7 +69,9 @@ export default function SsyuAvatar({
       style={{
         width: size,
         height: size,
-        background: background
+        background: bare
+          ? "transparent"
+          : background
           ? `linear-gradient(180deg, ${background.color}33, ${background.color}66)`
           : "linear-gradient(180deg, #FFF3D6, #FFE8B8)",
       }}

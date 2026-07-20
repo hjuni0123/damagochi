@@ -1,6 +1,11 @@
 import type { Metadata, Viewport } from "next";
+import { Jua, Gowun_Dodum, Press_Start_2P } from "next/font/google";
 import "./globals.css";
 import PwaRegister from "@/components/PwaRegister";
+
+const jua = Jua({ weight: "400", subsets: ["latin"], variable: "--font-jua", display: "swap" });
+const gowun = Gowun_Dodum({ weight: "400", subsets: ["latin"], variable: "--font-gowun", display: "swap" });
+const pixel = Press_Start_2P({ weight: "400", subsets: ["latin"], variable: "--font-pixel", display: "swap" });
 
 export const metadata: Metadata = {
   title: "쓔 키우기 프로젝트",
@@ -30,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className="h-full antialiased">
+    <html lang="ko" className={`h-full antialiased ${jua.variable} ${gowun.variable} ${pixel.variable}`}>
       <body className="min-h-full flex flex-col bg-ssyu-cream text-ssyu-brown">
         <PwaRegister />
         {children}
